@@ -29,7 +29,6 @@ public class Neo4jUtil {
     public boolean isNeo4jOpen() {
         try (Session session = neo4jDriver.session()) {
             log.info("连接成功：" + session.isOpen());
-            test(session);
             return session.isOpen();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -48,9 +47,10 @@ public class Neo4jUtil {
 
         List<Record> records=null;
         try (Session session = neo4jDriver.session()) {
-            System.out.println(session);
-            System.out.println(session.run(cypherSql));
+            //System.out.println(session);
+            //System.out.println(session.run(cypherSql));
             records = session.run(cypherSql).list();
+            System.out.println(records);
             //session.close();
 
             for (Record recordItem : records) {
@@ -86,7 +86,35 @@ public class Neo4jUtil {
 
         return returnList;
     }
+    public Map<String,List> count(){
+        List<Record> records=null;
+        List<Record> tmp=null;
+        List<String> labels=new ArrayList();
+        List<Value> nums=new ArrayList();
+        Map<String,List>returnMap=new HashMap<String,List>();
+        String cql;
+        String label;
+        Value num;
+        Record Item;
+        try (Session session = neo4jDriver.session()) {
+            records = session.run("call db.labels();").list();
 
+            for (Record recordItem : records) {
+                label=String.valueOf(recordItem.values().get(0));
+                label= label.replace("\"", "");
+                cql="MATCH (n:`"+label+"`) RETURN count(*)";
+                label="'"+label+"'";
+                labels.add(label);
+                tmp= session.run(cql).list();
+                Item= tmp.get(0);
+                num=Item.values().get(0);
+                nums.add(num);
+            }session.close();
+        }
+        returnMap.put("labels",labels);
+        returnMap.put("nums",nums);
+        return returnMap;
+    }
     public Map<String, Object> queryMap(String cypherSql) {
         //List returnList=new ArrayList();
         Map<String, Object> map1 = new HashMap<String, Object>();

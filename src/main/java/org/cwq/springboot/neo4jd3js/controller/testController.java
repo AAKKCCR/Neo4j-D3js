@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class testController {
     @GetMapping("hello")
     public String sayHello(){
-        return "neo/demo";
+        return "neo/vueTest";
     }
 }
 
