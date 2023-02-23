@@ -11,9 +11,16 @@
 	<META    HTTP-EQUIV="Pragma" CONTENT="no-cache">
 	<META    HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
 	<META    HTTP-EQUIV="Expires" CONTENT="0">
-
+    <link rel="stylesheet" href="/static/js/view-design4.6.1/dist/styles/iview.css">
+    <!-- import iView -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-
+    <script src="/static/js/sChart.min.js"></script>
+    <script src="/static/js/echarts.js"></script>
+    <script src="/static/js/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/static/js/vue/2.2.2/vue.min.js"></script>
+    <script src="/static/js/lodash/3.5.0/lodash.min.js"></script>
+    <script src="/static/js/d3/d3.v4.min.js"></script>
+    <script src="/static/js/view-design4.6.1/dist/iview.min.js"></script>
 	<style type="text/css">
 		.iview_select{
 			border: 1px solid #dcdee2;
@@ -34,22 +41,23 @@
 		'color: #5cadfe;
 		}
 		.iview_button{
-			border: 1px solid #dcdee2;
-			height: 32px;
+			border: 0px solid #dcdee2;
+			height: 30px;
 			line-height: 1.5;
 			font-weight: 400;
 			text-align: center;
 			vertical-align: middle;
-			border-radius: 4px;
-			padding: 0 15px;
-			font-size: 14px;
-			background-color: #fff;
-			color: #515a6e;
+			border-radius: 20px;
+			padding: 0 8px;
+			font-size: 12px;
+			background-color: #A9A9A9;
+			color: #fff;
 			cursor:pointer;
 		}
 		.iview_button:hover{
-			border: 1px solid #5cadfe;
-			color: #5cadfe;
+			border: 0px solid #fff;
+			color: #fff;
+            background-color:#C0C0C0
 		}
 		.pl-20{
 			padding-left:20px
@@ -89,6 +97,49 @@
 			font-size: 10px;
 
 		}
+        .layout{
+            border: 1px solid #d7dde4;
+            background: #f5f7f9;
+        }
+        .layout-logo{
+            width: 100px;
+            height: 30px;
+            background: #5b6270;
+            border-radius: 3px;
+            float: left;
+            position: relative;
+            top: 15px;
+            left: 20px;
+        }
+
+        /*    .layout-nav{
+                width: 420px;
+                margin: 0 auto;
+            }*/
+        .layout-assistant{
+            width: 300px;
+            margin: 0 auto;
+            height: inherit;
+        }
+        .layout-breadcrumb{
+            padding: 10px 15px 0;
+        }
+/*        .layout-content{
+            min-height: 200px;
+            margin: 15px;
+            overflow: hidden;
+            background: #f5f7f9;
+            border-radius: 4px;
+        }*/
+        /*    .layout-content-main{
+                padding: 10px;
+            }*/
+        .layout-copy{
+            text-align: center;
+            padding: 10px 0 20px;
+            color: #9ea7b4;
+        }
+
 
 
 
@@ -96,41 +147,99 @@
 </head>
 
 <body>
-<div id="app" class="layout">
-	<Layout>
-		<Header :style="{position: 'fixed', width: '100%'}">
-			<i-menu mode="horizontal" theme="dark" active-name="1">
-				<div class="layout-logo"></div>
-				<div class="layout-nav">
-					<i-menuitem name="1">
-						<i-input  v-model="nodename" placeholder="Enter something..." style="width: 300px;margin-left: 20px "></i-input>
-					</i-menuitem>
-					<i-menuitem name="2">
-                        <i-button type="primary" @click="Search">Search</i-button>
-					</i-menuitem>
-				</div>
-			</i-menu>
-		</Header>
-		<%--<Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '500px'}">
-			<div id="graphcontainer"  class="graphcontainer"></div>
-			<div class="svg-set-box"></div>
-		</Content>--%>
-		<%--<i-menu mode="horizontal" theme="dark" active-name="1">
-				<div class="layout-logo"></div>
-				<div class="layout-nav">
-					<i-menuitem name="1">
-						<i-input  v-model="nodename" placeholder="Enter something..." style="width: 300px;margin-left: 20px "></i-input>
-					</i-menuitem>
-					<i-menuitem name="2">
-						<i-button type="primary" @click="Search">Search</i-button>
-					</i-menuitem>
-				</div>
-		</i-menu>--%>
-		<div id="graphcontainer"  class="graphcontainer"></div>
-		<div class="svg-set-box"></div>
-		<Footer class="layout-footer-center">width</Footer>
-	</Layout>
+<div id="app" <%--class="layout"--%>>
+    <div class="layout">
+        <i-menu mode="horizontal" theme="dark" active-name="1">
+            <div class="layout-nav">
+                <i-menuitem name="1">
+                    <i-input  v-model="nodename" placeholder="Enter something..." style="width: 300px;margin-left: 20px "></i-input>
+                </i-menuitem>
+                <i-menuitem name="2">
+                    <i-button type="primary" @click="Search" shape="circle" icon="ios-search">搜索</i-button>
+                </i-menuitem>
+                <i-menuitem name="3">
+                    <i-button type="ghost" style="margin-left: 20px " @click="SearchNode('事件类型集')">预案</i-button>
+                </i-menuitem>
+                <i-menuitem name="4">
+                    <i-button type="ghost" style="margin-left: 10px " @click="SearchNode('场馆')">场馆</i-button>
+                </i-menuitem>
+            </div>
+        </i-menu>
+        <div class="layout-content">
+            <Row>
+                <i-col span="4">
+                    <i-menu theme="dark" active-name="1"  width="auto" <%--style="margin-top: 10px"--%>>
+                        <Menu-group title="">
+                            <div style="margin-bottom: 10px;margin-left: 20px;color:#fff">节点个数:${nodenum}</div>
+                            <div style="margin-left: 20px;color:#fff" >关系个数:${linknum}</div>
+                        </Menu-group>
+                        <Menu-group title="场地">
+                            <div>
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('场馆')">场馆</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('具体场馆')">具体场馆</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('场馆子区域')">场馆子区域</button>
+                            </div>
+                            <div style="margin-top: 10px">
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('子区域下功能区')">子区域下功能区</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('功能区下具体场所')">功能区下具体场所</button>
+                            </div>
+                            <div style="margin-top: 10px">
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('安保分区下具体场所')">安保分区下具体场所</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('安保分区')">安保分区</button>
+                            </div>
+                        </Menu-group>
+                        <Menu-group title="预案">
+                            <div>
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('事件类型集')">事件类型集</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('事件类型')">事件类型</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('情形')">情形</button>
+                            </div>
+                            <div style="margin-top: 10px">
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('指令')">指令</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('方法')">方法</button>
+                            </div>
+                        </Menu-group>
+                        <Menu-group title="人员">
+                            <div>
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('业务领域集')">业务领域集</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('业务领域')">业务领域</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('岗位')">岗位</button>
+                            </div>
+                            <div style="margin-top: 10px">
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('领导小组')">领导小组</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('安保人员')">安保人员</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('小分队')">小分队</button>
+                            </div>
+                            <div style="margin-top: 10px">
+                                <button class="iview_button" style="margin-left: 20px " @click="SearchLabel('主责领域')">主责领域</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('协同领域')">协同领域</button>
+                                <button class="iview_button" style="margin-left: 10px " @click="SearchLabel('分组')">分组</button>
+                            </div>
+                        </Menu-group>
+                        <Menu-group></Menu-group>
+                    </i-menu>
+                </i-col>
+                <i-col span="20">
+                    <div class="layout-content-main" style="margin-top: 5px;margin-left: 5px">
+                        <div id="graphcontainer"  class="graphcontainer" <%--style="display: inline-block;vertical-align: middle"--%> ></div>
+                    </div>
+                </i-col>
+            </Row>
+        </div>
+        <div style="height:30px ">
+            <p>{{Details}}</p>
+        </div>
+        <Divider> </Divider>
+        <div>
+            <div id="main" style="width: 600px;height:200px;display: inline-block;margin-left: 5px;"></div>
+            <div id="main1" style="width: 700px;height:200px;display: inline-block;float:right"></div>
+        </div>
+    </div>
 </div>
+<%--<div id="app1" class="layout">
+	<div id="test" style="width: 600px;height:400px;"></div>
+</div>--%>
+
 <%--<div class="canvas-wrapper" style="width: 2000px;height: 600px;margin-top: 10px">
 	<canvas id="canvas1"></canvas>
 </div>--%>
@@ -165,16 +274,7 @@
 	</Card>
 </div>--%>
 </body>
-
-<script src="/js/sChart.min.js"></script>
-<script src="/js/jquery/3.3.1/jquery.min.js"></script>
-<script src="/js/vue/2.2.2/vue.min.js"></script>
-<script src="/js/lodash/3.5.0/lodash.min.js"></script>
-<script src="/js/d3/d3.v4.min.js"></script>
-<link rel="stylesheet" href="/js/view-design4.6.1/dist/styles/iview.css">
-<!-- import iView -->
-<script src="/js/view-design4.6.1/dist/iview.min.js"></script>
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" >
 	var contextRoot='/';
 	var jsondata=${jsondata};
 
@@ -189,7 +289,34 @@
 	var nums=${nums};
 
 	//随机颜色
-	var colorScale = d3.scaleOrdinal().domain(d3.range(jsondata.node.length)).range(d3.schemeCategory10);
+	var colorScale = d3.scaleOrdinal().domain(d3.range(labels.length)).range(d3.schemeCategory10);
+
+/*	var myChart = echarts.init(document.getElementById('test'));
+
+	// 指定图表的配置项和数据
+	var option = {
+		title: {
+			text: 'ECharts 入门示例'
+		},
+		tooltip: {},
+		legend: {
+			data: ['销量']
+		},
+		xAxis: {
+			data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+		},
+		yAxis: {},
+		series: [
+			{
+				name: '销量',
+				type: 'bar',
+				data: [5, 20, 36, 10, 10, 20]
+			}
+		]
+	};
+
+	// 使用刚指定的配置项和数据显示图表。
+	myChart.setOption(option);*/
 
     /*const options = {
         type: 'pie',
@@ -220,16 +347,35 @@
     }
 	new Schart('canvas1', options);*/
 /*	var vt=new Vue({
-		el:'#vue_test',
+		el:'#app1',
 		data: {
 		},
 		methods: {
 		}
 	})*/
-	var app = new Vue({
+	Vue.prototype.$echarts = echarts
+
+/*    function colorScale() {
+	    console.log(jsondata.node.length)
+        return d3.scaleOrdinal().domain(d3.range(jsondata.node.length)).range(d3.schemeCategory10);
+    }*/
+    function Color(l)
+    {
+        console.log("color---------------------")
+        console.log(l)
+        for (var i = 0; i < labels.length; i++) {
+            if (labels[i]==l) {
+                return i;
+            }
+        }
+
+        return 1;
+    }
+    var app = new Vue({
 		el: '#app',
 		data: {
 			nodename:'',
+			Details:' ',
 			svg:null,
 			timer:null,
 			editor:null,
@@ -274,6 +420,7 @@
 			this.headers = eval('(' + str + ')');
 			this.initgraph();
 			this.updategraph();
+			this.init()
 		},
 		created() {
 			this.graph.nodes = jsondata.node;
@@ -296,7 +443,64 @@
 				console.log('$prompt')
 				console.log(msgObj)
 			},
+			init() {
+				//2.初始化
+				var myChart = this.$echarts.init(document.getElementById('main'),'dark');
+				//3.配置数据
+				let option = {
+					title: {
+						text: '各类型节点数量'
+					},
+					tooltip: {},
+					legend: {
+						data: ['数量']
+					},
+					xAxis: {
+						data: labels
+					},
+					yAxis: {},
+					series: [
+						{
+							name: '数量',
+							type: 'bar',
+							data: nums
+						}
+					]
+				};
+				// 4.传入数据
+				myChart.setOption(option);
+
+                let option1 = {
+                    title: {
+                        text: '各类型节点占比示意图',
+                        left: 'center'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ${labels}
+                    },
+                    series: [
+                        {
+                            name: '数量',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data:
+                                ${Count}
+                            ,
+                        }
+                    ]
+                };
+                var myChart1 = this.$echarts.init(document.getElementById('main1'));
+                myChart1.setOption(option1);
+                console.log(${labels});
+			},
 			test()
+			{
+				this.nodename="11111";
+			},
+			update()
 			{
 				console.log("-----------------test")
 				this.graph.links.splice(0,this.graph.links.length);
@@ -308,48 +512,173 @@
 				var _this = this;
 				var data = {domain: _this.domain, nodename: _this.nodename};
 				data.domain = _this.domain;
-				$.ajax({
-					data: data,
-					type: "POST",
-					traditional: true,
-					url: contextRoot + "Neo/SearchNode",
-					success: function (result) {
-						console.log("successssssssssssssssss");
-						console.log(result)
-						if (result.resp_msg=="ok") {
-							console.log(result.msg);
-							d3.select('.graphcontainer').style("cursor", "");
-							if (_this.graphEntity.uuid != 0) {
-								for (var i = 0; i < _this.graph.nodes.length; i++) {
-									if (_this.graph.nodes[i].uuid == _this.graphEntity.uuid) {
-										_this.graph.nodes.splice(i, 1);
-									}
-								}
-							}
-							var newnode = result.datas.node[0];
-							/*newnode.x = _this.txx;
-							newnode.y = _this.tyy;
-							newnode.fx = _this.txx;
-							newnode.fy = _this.tyy;*/
-							_this.test();
-							_this.graph.nodes.push(newnode);
-							_this.updategraph();
-							_this.isedit = false;
-						}
-						else{
-							alert("未找到该节点！");
-						}
-					},
-					error: function () {
-						alert("未找到该节点！");
-					}
-				});
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    traditional: true,
+                    url: contextRoot+"Neo/SearchNode",
+                    success: function (result) {
+                        console.log("successssssssssssssssss");
+                        console.log(result)
+                        if (result.resp_msg=="ok") {
+                            console.log(result.msg);
+                            d3.select('.graphcontainer').style("cursor", "");
+                            if (_this.graphEntity.uuid != 0) {
+                                for (var i = 0; i < _this.graph.nodes.length; i++) {
+                                    if (_this.graph.nodes[i].uuid == _this.graphEntity.uuid) {
+                                        _this.graph.nodes.splice(i, 1);
+                                    }
+                                }
+                            }
+                            var newnode = result.datas.node[0];
+                            /*newnode.fx=100;
+                            newnode.fy=100;*/
+                            _this.update();
+                            var graphcontainer = d3.select(".graphcontainer");
+                            var width = graphcontainer._groups[0][0].offsetWidth;
+                            console.log(width);
+                            var height =600;
+                            _this.simulation = d3.forceSimulation()
+                                //线长
+                                .force("link", d3.forceLink().distance(200).id(function (d) {
+                                    return d.uuid
+                                }))
+                                .force("charge", d3.forceManyBody().strength(-400))
+                                .force("collide", d3.forceCollide().strength(-30))
+                                .force("center", d3.forceCenter(width / 2, (height - 200) / 2));
+                            _this.graph.nodes.push(newnode);
+                            _this.svg.x=0;
+                            _this.svg.y=0;
+                            _this.updategraph();
+                            _this.isedit = false;
+                        }
+                        else{
+                            alert("未找到该节点！");
+                        }
+                    },
+                    error: function () {
+                        alert("未找到该节点！");
+                    }
+                });
 				/*console.log(this.nodename);
 				this.initgraph();*/
 			},
+            SearchNode(name)
+            {
+                console.log("----------------SearchNode");
+                var _this = this;
+                var data = {nodename: name};
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    traditional: true,
+                    url: contextRoot + "Neo/SearchNode",
+                    success: function (result) {
+                        console.log("successssssssssssssssss");
+                        console.log(result)
+                        if (result.resp_msg=="ok") {
+                            console.log(result.msg);
+                            d3.select('.graphcontainer').style("cursor", "");
+                            if (_this.graphEntity.uuid != 0) {
+                                for (var i = 0; i < _this.graph.nodes.length; i++) {
+                                    if (_this.graph.nodes[i].uuid == _this.graphEntity.uuid) {
+                                        _this.graph.nodes.splice(i, 1);
+                                    }
+                                }
+                            }
+                            var newnode = result.datas.node[0];
+                            /*newnode.x = _this.txx;
+                            newnode.y = _this.tyy;
+                            newnode.fx = _this.txx;
+                            newnode.fy = _this.tyy;*/
+                            _this.update();
+                            var graphcontainer = d3.select(".graphcontainer");
+                            var width = graphcontainer._groups[0][0].offsetWidth;
+                            console.log(width);
+                            var height =600;
+                            _this.simulation = d3.forceSimulation()
+                                //线长
+                                .force("link", d3.forceLink().distance(200).id(function (d) {
+                                    return d.uuid
+                                }))
+                                .force("charge", d3.forceManyBody().strength(-400))
+                                .force("collide", d3.forceCollide().strength(-30))
+                                .force("center", d3.forceCenter(width / 2, (height - 200) / 2));
+                            _this.graph.nodes.push(newnode);
+                            _this.updategraph();
+                            _this.isedit = false;
+                        }
+                        else{
+                            alert("未找到该节点！");
+                        }
+                    },
+                    error: function () {
+                        alert("未找到该节点！");
+                    }
+                });
+            },
+            SearchLabel(la)
+            {
+                console.log("----------------SearchNode");
+                var _this = this;
+                var data = {label: la};
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    traditional: true,
+                    url: contextRoot + "Neo/SearchLabel",
+                    success: function (result) {
+                        console.log("successssssssssssssssss");
+                        console.log(result)
+                        if (result.resp_msg=="ok") {
+                            console.log(result.msg);
+                            d3.select('.graphcontainer').style("cursor", "");
+                            /*if (_this.graphEntity.uuid != 0) {
+                                for (var i = 0; i < _this.graph.nodes.length; i++) {
+                                    if (_this.graph.nodes[i].uuid == _this.graphEntity.uuid) {
+                                        _this.graph.nodes.splice(i, 1);
+                                    }
+                                }
+                            }*/
+                            _this.update();
+                            var newnode;
+                            var newlink;
+                            for(var i=0;i<result.datas.node.length;i++)
+                            {
+                                newnode = result.datas.node[i];
+                                _this.graph.nodes.push(newnode);
+                            }
+                            for(var i=0;i<result.datas.relationship.length;i++)
+                            {
+                                newlink=result.datas.relationship[i];
+                                _this.graph.links.push(newlink);
+                            }
+                            var graphcontainer = d3.select(".graphcontainer");
+                            var width = graphcontainer._groups[0][0].offsetWidth;
+                            console.log(width);
+                            var height =600;
+                            _this.simulation = d3.forceSimulation()
+                                //线长
+                                .force("link", d3.forceLink().distance(200).id(function (d) {
+                                    return d.uuid
+                                }))
+                                .force("charge", d3.forceManyBody().strength(-400))
+                                .force("collide", d3.forceCollide().strength(-30))
+                                .force("center", d3.forceCenter(width / 2, (height - 200) / 2));
+                            _this.updategraph();
+                            _this.isedit = false;
+                        }
+                        else{
+                            alert("未找到该节点！");
+                        }
+                    },
+                    error: function () {
+                        alert("未找到该节点！");
+                    }
+                });
+            },
 			getNodeDetail(_uuid){
-				console.log(this.txx)
-				console.log(this.tyy)
+				console.log("detailllllllllllllllll");
 				console.log(_uuid)
 			},
 			getcurrentnodeinfo(_d){
@@ -389,8 +718,15 @@
 
 			},
 			showTheNodeDtlInfo(_d){
-				//弹出小面板，显示详细信息
+			    /*var str1=_d.p.slice(0,25);
+			    var str2=_d.p.slice(26,50);
+			    var str3=_d.p.slice(50,_d.p.length);
 
+				this.$Modal.info({title:"节点详情",content:str1+'</br>'+str2+'</br>'+str3});*/
+                this.$message({
+                    type: 'info',
+                    message: _d.p
+                });
 			},
 			getmorenode() {
 				console.log('getmorenode---');
@@ -446,9 +782,12 @@
 				var graphcontainer = d3.select(".graphcontainer");
 				var width = graphcontainer._groups[0][0].offsetWidth;
 				console.log(width);
-				var height =650;// window.screen.height - 154;//
+				var height =600;// window.screen.height - 154;//
 				console.log('---------------initgraph()')
 				this.svg = graphcontainer.append("svg");
+				/*width=1000;*/
+                this.svg.x=0;
+                this.svg.y=0;
 				this.svg.attr("width", width);
 				this.svg.attr("height", height);
 				this.simulation = d3.forceSimulation()
@@ -480,6 +819,8 @@
 				var lks = this.graph.links;
 				var nodes = this.graph.nodes;
 				var links = [];
+				this.svg.x=0;
+				this.svg.y=0;
 				lks.forEach(function (m) {
 					var sourceNode = nodes.filter(function (n) {
 						return n.uuid === m.sourceid;
@@ -653,11 +994,11 @@
 							});
 					// 更新回形针坐标
 					nodesymbol.attr("transform", function (d) {
+
 						return "translate(" + (d.x + 8) + "," + (d.y - 30) + ") scale(0.015,0.015)";
 					})
 				}
 				// 鼠标滚轮缩放
-				//_this.svg.call(d3.zoom().transform, d3.zoomIdentity);//缩放至初始倍数
 				_this.svg.call(d3.zoom().on("zoom", function () {
 					d3.selectAll('.node').attr("transform",d3.event.transform);
 					d3.selectAll('.nodetext').attr("transform",d3.event.transform);
@@ -715,10 +1056,10 @@
 				_this.svg.selectAll(".action_0").on("click", function (d) {
 					_this.nodebuttonAction='MORE';//展开
 				});
-				_this.svg.selectAll(".action_1").on("click", function (d) {
+				_this.svg.selectAll(".action_2").on("click", function (d) {
 					_this.nodebuttonAction='SELECT';//选中
 				});
-				_this.svg.selectAll(".action_2").on("click", function (d) {
+				_this.svg.selectAll(".action_1").on("click", function (d) {
 					_this.nodebuttonAction='DTL';//详情
 					//_this.nodebuttonAction='CHILD_XXX';
 				});
@@ -817,8 +1158,8 @@
 
 
 							zi[0] = "展开";
-							zi[1] = "选中";
-							zi[2] = "详情";
+							zi[1] = "详情";
+							zi[2] = "";
 							zi[3] = "";
 							zi[4] = "";
 
@@ -852,9 +1193,12 @@
 					if (typeof(d.color) != "undefined" && d.color != '') {
 						return d.color
 					}
-					//console.log(d)
-					//console.log(i)
-					//return "#ff4500";
+					/*console.log(d)
+					console.log(i)
+					return "#ff4500";*/
+                    let l=d.label.slice(2,d.label.length-2);
+                    i=Color(l);
+                    console.log(i);
 					return colorScale(i);
 				});
 				nodeEnter.style("opacity", 0.8);
@@ -870,7 +1214,8 @@
 							return d.name;
 						})
 				nodeEnter.on("mouseover", function (d, i) {
-					_this.timer = setTimeout(function () {
+					_this.Details=d.p;
+					/*_this.timer = setTimeout(function () {
 						d3.select('#richContainer')
 								.style('position', 'absolute')
 								.style('left', d.x + "px")
@@ -879,7 +1224,7 @@
 						_this.editorcontent = "";
 						_this.showImageList = [];
 						_this.getNodeDetail(d.uuid);
-					}, 3000);
+					}, 3000);*/
 				});
 				nodeEnter.on("mouseout", function (d, i) {
 					clearTimeout( _this.timer);
@@ -888,11 +1233,13 @@
 					app.updatenodename(d);// 双击更新节点名称
 				});
 				nodeEnter.on("mouseenter", function (d) {
+					_this.Details=d.p;
 					var aa = d3.select(this)._groups[0][0];
 					if (aa.classList.contains("selected")) return;
 					d3.select(this).style("stroke-width", "6");
 				});
 				nodeEnter.on("mouseleave", function (d) {
+					_this.Details=' ';
 					var aa = d3.select(this)._groups[0][0];
 					if (aa.classList.contains("selected")) return;
 					d3.select(this).style("stroke-width", "2");
@@ -907,7 +1254,6 @@
 
 					// 更新工具栏节点信息
 					_this.getcurrentnodeinfo(d);
-
 					// 添加连线状态
 					if (_this.isaddlink) {
 						_this.selecttargetnodeid = d.uuid;
@@ -928,7 +1274,7 @@
 			drawnodetext(nodetext) {
 				var _this = this;
 				var nodetextenter = nodetext.enter().append("text")
-						.style("fill", "#fff")
+						.style("fill", "#000")
 						.attr("dy", 4)
 						.attr("font-family", "微软雅黑")
 						.attr("text-anchor", "middle")
@@ -954,6 +1300,7 @@
 
 
 					}, 3000);
+
 				});
 
 				nodetextenter.on("dblclick", function (d) {
@@ -987,6 +1334,7 @@
 						.on("start", _this.dragstarted)
 						.on("drag", _this.dragged)
 						.on("end", _this.dragended));
+				console.log("dragggggggggggggggggggg");
 				return nodesymbolEnter;
 			},
 			drawnodebutton(nodebutton) {

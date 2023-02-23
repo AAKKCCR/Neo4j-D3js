@@ -59,7 +59,6 @@ public class NeoTest1 {
     }
     @Test
     void test00000003() {
-        System.out.println(neo4jUtil.count());
-        //neo4jUtil.queryList("MATCH (n:`事件类型`) RETURN n LIMIT 25");
+        System.out.println(neo4jUtil.CountReserveNode());
     }
 }

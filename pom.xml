@@ -11,6 +11,7 @@
     <groupId>org.cwq.springboot</groupId>
     <artifactId>neo4j-d3js</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>neo4j-d3js</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -42,10 +43,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <!-- 部署tomcat,排除冲突-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,6 +53,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
         </dependency>
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -170,7 +173,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.8.2</version>
             <scope>compile</scope>
         </dependency>
 
@@ -181,6 +184,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.6.RELEASE</version>
             </plugin>
         </plugins>
     </build>
